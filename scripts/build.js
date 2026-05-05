@@ -55,6 +55,8 @@ ${imgTags}
   fs.writeFileSync(path.join(PUBLIC_DIR, 'index.html'), html);
   console.log('Generated: index.html');
 
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'CNAME'), 'tqj-s-album.site');
+
   writeStaticAssets();
 }
 
