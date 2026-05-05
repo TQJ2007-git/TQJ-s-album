@@ -19,7 +19,7 @@
 
   function open(index) {
     currentIndex = index;
-    lightboxImg.src = images[index].src;
+    lightboxImg.src = images[index].dataset.full;
     lightbox.classList.add('active');
     counter.textContent = (index + 1) + ' / ' + images.length;
     document.body.style.overflow = 'hidden';

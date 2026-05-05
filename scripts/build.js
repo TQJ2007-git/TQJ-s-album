@@ -1,12 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 const ROOT = path.resolve(__dirname, '..');
 const PHOTOS_DIR = path.join(ROOT, 'photos');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const PUBLIC_PHOTOS = path.join(PUBLIC_DIR, 'photos');
+const THUMB_DIR = path.join(PUBLIC_PHOTOS, 'thumb');
+const FULL_DIR = path.join(PUBLIC_PHOTOS, 'full');
 
 const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+
+const THUMB_WIDTH = 400;
+const FULL_WIDTH = 1200;
+const THUMB_QUALITY = 80;
+const FULL_QUALITY = 85;
 
 function getPhotos() {
   return fs.readdirSync(PHOTOS_DIR)
@@ -14,23 +22,58 @@ function getPhotos() {
     .sort();
 }
 
-function build() {
-  const photos = getPhotos();
-  console.log(`Found ${photos.length} photos`);
+async function processImage(photo) {
+  const input = path.join(PHOTOS_DIR, photo);
+  const name = path.parse(photo).name + '.webp';
+  const metadata = await sharp(input).metadata();
 
-  fs.rmSync(PUBLIC_DIR, { recursive: true, force: true });
-  fs.mkdirSync(PUBLIC_PHOTOS, { recursive: true });
+  const thumbOut = path.join(THUMB_DIR, name);
+  const fullOut = path.join(FULL_DIR, name);
 
-  for (const photo of photos) {
-    fs.copyFileSync(
-      path.join(PHOTOS_DIR, photo),
-      path.join(PUBLIC_PHOTOS, photo)
-    );
-    console.log(`  Copied: ${photo}`);
+  const thumbPipeline = sharp(input).webp({ quality: THUMB_QUALITY });
+  const fullPipeline = sharp(input).webp({ quality: FULL_QUALITY });
+
+  if (metadata.width > THUMB_WIDTH) {
+    thumbPipeline.resize(THUMB_WIDTH);
+  }
+  if (metadata.width > FULL_WIDTH) {
+    fullPipeline.resize(FULL_WIDTH);
   }
 
-  const imgTags = photos
-    .map(p => `      <img src="photos/${p}" alt="${p}" loading="lazy">`)
+  await Promise.all([
+    thumbPipeline.toFile(thumbOut),
+    fullPipeline.toFile(fullOut),
+  ]);
+
+  const thumbStat = fs.statSync(thumbOut);
+  const fullStat = fs.statSync(fullOut);
+  const origStat = fs.statSync(input);
+
+  console.log(`  ${photo} (${(origStat.size / 1024).toFixed(0)}KB)`);
+  console.log(`    thumb: ${name} (${(thumbStat.size / 1024).toFixed(0)}KB)`);
+  console.log(`    full:  ${name} (${(fullStat.size / 1024).toFixed(0)}KB)`);
+}
+
+async function build() {
+  const photos = getPhotos();
+  console.log(`Found ${photos.length} photos\n`);
+
+  fs.rmSync(PUBLIC_DIR, { recursive: true, force: true });
+  fs.mkdirSync(THUMB_DIR, { recursive: true });
+  fs.mkdirSync(FULL_DIR, { recursive: true });
+
+  const processedPhotos = [];
+  for (const photo of photos) {
+    await processImage(photo);
+    processedPhotos.push(photo);
+    console.log('');
+  }
+
+  const imgTags = processedPhotos
+    .map(p => {
+      const webpName = path.parse(p).name + '.webp';
+      return `      <img src="photos/thumb/${webpName}" alt="${p}" data-full="photos/full/${webpName}" loading="lazy">`;
+    })
     .join('\n');
 
   const html = `<!DOCTYPE html>
@@ -58,6 +101,22 @@ ${imgTags}
   fs.writeFileSync(path.join(PUBLIC_DIR, 'CNAME'), 'tqj-s-album.site');
 
   writeStaticAssets();
+
+  const totalSize = getDirSize(PUBLIC_DIR);
+  console.log(`\nTotal public size: ${(totalSize / 1024 / 1024).toFixed(1)}MB`);
+}
+
+function getDirSize(dir) {
+  let size = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      size += getDirSize(p);
+    } else {
+      size += fs.statSync(p).size;
+    }
+  }
+  return size;
 }
 
 function writeStaticAssets() {
@@ -181,7 +240,7 @@ body {
 
   function open(index) {
     currentIndex = index;
-    lightboxImg.src = images[index].src;
+    lightboxImg.src = images[index].dataset.full;
     lightbox.classList.add('active');
     counter.textContent = (index + 1) + ' / ' + images.length;
     document.body.style.overflow = 'hidden';
@@ -241,4 +300,7 @@ body {
   console.log('Generated: lightbox.js');
 }
 
-build();
+build().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
