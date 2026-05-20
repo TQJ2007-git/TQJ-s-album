@@ -87,21 +87,21 @@ async function build() {
 <body>
   <section class="hero">
     <div class="hero-inner">
-      <div class="hero-label">PORTFOLIO · 2026</div>
-      <h1 class="hero-title">Album</h1>
+      <div class="hero-label" lang="en">PORTFOLIO · 2026</div>
+      <h1 class="hero-title" lang="en">Album</h1>
       <div class="hero-subtitle">摄影作品</div>
       <div class="hero-divider"></div>
-      <p class="hero-quote">You will never walk alone</p>
+      <p class="hero-quote" lang="en">You will never walk alone</p>
       <div class="hero-author">— tqj</div>
     </div>
-    <a href="#gallery" class="hero-scroll">↓ SCROLL</a>
+    <a href="#gallery" class="hero-scroll" lang="en">↓ SCROLL</a>
   </section>
   <main id="gallery" class="gallery">
 ${imgTags}
   </main>
   <footer class="site-footer">
     <div class="footer-divider"></div>
-    <div class="footer-text">© 2026 tqj</div>
+    <div class="footer-text" lang="en">© 2026 tqj</div>
   </footer>
   <div class="lightbox" id="lightbox">
     <img id="lightbox-img" src="" alt="">
