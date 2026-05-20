@@ -81,13 +81,28 @@ async function build() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>摄影作品</title>
+  <title>Album · 摄影作品</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="gallery">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-label">PORTFOLIO · 2026</div>
+      <h1 class="hero-title">Album</h1>
+      <div class="hero-subtitle">摄影作品</div>
+      <div class="hero-divider"></div>
+      <p class="hero-quote">You will never walk alone</p>
+      <div class="hero-author">— tqj</div>
+    </div>
+    <a href="#gallery" class="hero-scroll">↓ SCROLL</a>
+  </section>
+  <main id="gallery" class="gallery">
 ${imgTags}
-  </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-divider"></div>
+    <div class="footer-text">© 2026 tqj</div>
+  </footer>
   <div class="lightbox" id="lightbox">
     <img id="lightbox-img" src="" alt="">
   </div>
