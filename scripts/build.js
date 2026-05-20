@@ -81,13 +81,28 @@ async function build() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>摄影作品</title>
+  <title>Album · 摄影作品</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="gallery">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-label" lang="en">PORTFOLIO · 2026</div>
+      <h1 class="hero-title" lang="en">Album</h1>
+      <div class="hero-subtitle">摄影作品</div>
+      <div class="hero-divider"></div>
+      <p class="hero-quote" lang="en">You will never walk alone</p>
+      <div class="hero-author">— tqj</div>
+    </div>
+    <a href="#gallery" class="hero-scroll" lang="en">↓ SCROLL</a>
+  </section>
+  <main id="gallery" class="gallery">
 ${imgTags}
-  </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-divider"></div>
+    <div class="footer-text" lang="en">© 2026 tqj</div>
+  </footer>
   <div class="lightbox" id="lightbox">
     <img id="lightbox-img" src="" alt="">
   </div>
@@ -126,18 +141,124 @@ function writeStaticAssets() {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: #0d0d0d;
-  color: #ccc;
+  background: #0f0d0a;
+  color: #e8e2d6;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ===== Hero ===== */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  position: relative;
+}
+
+.hero-inner {
+  max-width: 720px;
+  width: 100%;
+  text-align: left;
+}
+
+.hero-label {
+  color: #8a7a6a;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.hero-title {
+  font-family: Georgia, "Times New Roman", serif;
+  color: #e8e2d6;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.hero-subtitle {
+  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif SC", serif;
+  color: #a89888;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 6px;
+  margin-top: 8px;
+}
+
+.hero-divider {
+  width: 28px;
+  height: 1px;
+  background: #5a4d3d;
+  margin-top: 24px;
+}
+
+.hero-quote {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  color: #e8e2d6;
+  font-size: 16px;
+  margin-top: 24px;
+}
+
+.hero-author {
+  color: #a89888;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-top: 12px;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #8a7a6a;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-decoration: none;
+  animation: heroScroll 1.5s ease-in-out infinite;
+}
+
+.hero-scroll:focus-visible {
+  outline: 2px solid #a89888;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+@keyframes heroScroll {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll {
+    animation: none;
+  }
+  .gallery img {
+    transition: none;
+  }
+}
+
+/* ===== Gallery ===== */
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 4px;
-  padding: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 32px;
 }
 
 .gallery img {
@@ -145,12 +266,38 @@ body {
   height: auto;
   display: block;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .gallery img:hover {
-  opacity: 0.85;
+  opacity: 0.7;
+  transform: scale(0.99);
 }
+
+/* ===== Footer ===== */
+
+.site-footer {
+  margin-top: 80px;
+  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-divider {
+  width: 28px;
+  height: 1px;
+  background: #5a4d3d;
+}
+
+.footer-text {
+  color: #a89888;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+/* ===== Lightbox (unchanged) ===== */
 
 .lightbox {
   display: none;
@@ -207,11 +354,45 @@ body {
   font-size: 0.875rem;
 }
 
+/* ===== Mobile ===== */
+
 @media (max-width: 600px) {
+  .hero {
+    padding: 24px;
+  }
+
+  .hero-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-size: 40px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    letter-spacing: 5px;
+  }
+
+  .hero-quote {
+    font-size: 14px;
+  }
+
+  .hero-author {
+    font-size: 11px;
+  }
+
   .gallery {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 2px;
-    padding: 2px;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .site-footer {
+    margin-top: 48px;
+    padding-bottom: 40px;
   }
 }
 `;

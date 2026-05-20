@@ -33,8 +33,11 @@
 | 页面背景 | `#0f0d0a`（暖黑） |
 | 主文字（标题、引言） | `#e8e2d6`（米色） |
 | 次文字（副标、署名、页脚） | `#a89888`（暖灰） |
-| 弱文字 / 装饰线 | `#5a4d3d`（深暖灰） |
+| 弱文字（小标签） | `#8a7a6a`（暖灰，AA 通过） |
+| 装饰线 | `#5a4d3d`（深暖灰，仅用于 background） |
 | 灯箱遮罩 | `rgba(0, 0, 0, 0.92)` —— 保持不动 |
+
+> 注：`.hero-label` 和 `.hero-scroll` 的小字采用 `#8a7a6a` 而非装饰色 `#5a4d3d`，以满足 WCAG AA 对比度要求（4.69:1）。
 
 ### 字体
 
@@ -80,7 +83,7 @@
 | 分隔线 | `#5a4d3d`（28×1px） | — | — |
 | 引言 `You will never walk alone` | `#e8e2d6` | 16px，Georgia italic | 14px |
 | 作者署名 `— tqj` | `#a89888` | 12px，无衬线 | 11px |
-| 顶部标签 `PORTFOLIO · 2026` / 底部提示 `↓ SCROLL` | `#5a4d3d` | 11px，letter-spacing 4px，uppercase，无衬线 | 同 |
+| 顶部标签 `PORTFOLIO · 2026` / 底部提示 `↓ SCROLL` | `#8a7a6a` | 11px，letter-spacing 4px，uppercase，无衬线 | 同 |
 | 元素间垂直间距 | — | 标题→副标 8px；副标→分隔线 24px；分隔线→引言 24px；引言→署名 12px | 比例缩小 |
 
 ### 滚动提示
