@@ -247,6 +247,9 @@ body {
   .hero-scroll {
     animation: none;
   }
+  .gallery img {
+    transition: none;
+  }
 }
 
 /* ===== Gallery ===== */
