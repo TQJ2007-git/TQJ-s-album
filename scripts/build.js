@@ -173,7 +173,7 @@ body {
 }
 
 .hero-label {
-  color: #5a4d3d;
+  color: #8a7a6a;
   font-size: 11px;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -225,16 +225,28 @@ body {
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
-  color: #5a4d3d;
+  color: #8a7a6a;
   font-size: 11px;
   letter-spacing: 4px;
   text-decoration: none;
   animation: heroScroll 1.5s ease-in-out infinite;
 }
 
+.hero-scroll:focus-visible {
+  outline: 2px solid #a89888;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 @keyframes heroScroll {
   0%, 100% { transform: translate(-50%, 0); }
   50%      { transform: translate(-50%, 4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll {
+    animation: none;
+  }
 }
 
 /* ===== Gallery ===== */
