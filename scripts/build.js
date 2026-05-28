@@ -14,7 +14,7 @@ const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const THUMB_WIDTH = 400;
 const FULL_WIDTH = 1200;
 const THUMB_QUALITY = 80;
-const FULL_QUALITY = 85;
+const FULL_QUALITY = 78;
 
 function getPhotos() {
   return fs.readdirSync(PHOTOS_DIR)
@@ -70,9 +70,11 @@ async function build() {
   }
 
   const imgTags = processedPhotos
-    .map(p => {
+    .map((p, i) => {
       const webpName = path.parse(p).name + '.webp';
-      return `      <img src="photos/thumb/${webpName}" alt="${p}" data-full="photos/full/${webpName}" loading="lazy">`;
+      const loading = i < 4 ? 'eager' : 'lazy';
+      const priority = i < 4 ? ' fetchpriority="high"' : '';
+      return `      <img src="photos/thumb/${webpName}" alt="${p}" data-full="photos/full/${webpName}" loading="${loading}"${priority} decoding="async">`;
     })
     .join('\n');
 
