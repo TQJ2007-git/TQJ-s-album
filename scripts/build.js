@@ -252,6 +252,13 @@ body {
   .gallery img {
     transition: none;
   }
+  .lightbox,
+  .lightbox img {
+    transition: none;
+  }
+  .lightbox img.loading {
+    filter: none;
+  }
 }
 
 /* ===== Gallery ===== */
@@ -299,20 +306,27 @@ body {
   letter-spacing: 2px;
 }
 
-/* ===== Lightbox (unchanged) ===== */
+/* ===== Lightbox ===== */
 
 .lightbox {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.92);
   z-index: 1000;
   align-items: center;
   justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: visibility 0s 0.3s, opacity 0.3s ease;
 }
 
 .lightbox.active {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition: visibility 0s 0s, opacity 0.3s ease;
 }
 
 .lightbox img {
@@ -321,11 +335,15 @@ body {
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-  transition: filter 0.2s ease;
+  transition: opacity 0.25s ease, filter 0.2s ease;
 }
 
 .lightbox img.loading {
   filter: blur(8px);
+}
+
+.lightbox img.crossfade {
+  opacity: 0;
 }
 
 .lightbox .nav-prev,
@@ -479,6 +497,7 @@ body {
   const images = Array.from(gallery.querySelectorAll('img'));
   let currentIndex = -1;
   let loadToken = 0;
+  let crossfadeToken = 0;
   const fullCache = new Set();
 
   const prevBtn = document.createElement('button');
@@ -512,33 +531,50 @@ body {
   }
 
   function open(index) {
+    const wasActive = lightbox.classList.contains('active');
     currentIndex = index;
     const thumb = images[index];
     const fullUrl = thumb.dataset.full;
     const token = ++loadToken;
+    const cfToken = ++crossfadeToken;
 
-    lightboxImg.src = thumb.src;
     lightboxImg.classList.add('loading');
-    lightbox.classList.add('active');
     counter.textContent = (index + 1) + ' / ' + images.length;
     document.body.style.overflow = 'hidden';
 
-    if (fullCache.has(fullUrl)) {
-      lightboxImg.src = fullUrl;
-      lightboxImg.classList.remove('loading');
-    } else {
-      const loader = new Image();
-      loader.onload = function() {
-        if (token !== loadToken) return;
-        fullCache.add(fullUrl);
+    function applyFull() {
+      if (token !== loadToken) return;
+      if (fullCache.has(fullUrl)) {
         lightboxImg.src = fullUrl;
         lightboxImg.classList.remove('loading');
-      };
-      loader.onerror = function() {
-        if (token !== loadToken) return;
-        lightboxImg.classList.remove('loading');
-      };
-      loader.src = fullUrl;
+      } else {
+        const loader = new Image();
+        loader.onload = function() {
+          if (token !== loadToken) return;
+          fullCache.add(fullUrl);
+          lightboxImg.src = fullUrl;
+          lightboxImg.classList.remove('loading');
+        };
+        loader.onerror = function() {
+          if (token !== loadToken) return;
+          lightboxImg.classList.remove('loading');
+        };
+        loader.src = fullUrl;
+      }
+    }
+
+    if (wasActive) {
+      lightboxImg.classList.add('crossfade');
+      setTimeout(function() {
+        if (cfToken !== crossfadeToken) return;
+        lightboxImg.src = thumb.src;
+        lightboxImg.classList.remove('crossfade');
+        applyFull();
+      }, 260);
+    } else {
+      lightboxImg.src = thumb.src;
+      lightbox.classList.add('active');
+      applyFull();
     }
 
     preload((index + 1) % images.length);

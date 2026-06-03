@@ -5,6 +5,7 @@
   const images = Array.from(gallery.querySelectorAll('img'));
   let currentIndex = -1;
   let loadToken = 0;
+  let crossfadeToken = 0;
   const fullCache = new Set();
 
   const prevBtn = document.createElement('button');
@@ -38,33 +39,50 @@
   }
 
   function open(index) {
+    const wasActive = lightbox.classList.contains('active');
     currentIndex = index;
     const thumb = images[index];
     const fullUrl = thumb.dataset.full;
     const token = ++loadToken;
+    const cfToken = ++crossfadeToken;
 
-    lightboxImg.src = thumb.src;
     lightboxImg.classList.add('loading');
-    lightbox.classList.add('active');
     counter.textContent = (index + 1) + ' / ' + images.length;
     document.body.style.overflow = 'hidden';
 
-    if (fullCache.has(fullUrl)) {
-      lightboxImg.src = fullUrl;
-      lightboxImg.classList.remove('loading');
-    } else {
-      const loader = new Image();
-      loader.onload = function() {
-        if (token !== loadToken) return;
-        fullCache.add(fullUrl);
+    function applyFull() {
+      if (token !== loadToken) return;
+      if (fullCache.has(fullUrl)) {
         lightboxImg.src = fullUrl;
         lightboxImg.classList.remove('loading');
-      };
-      loader.onerror = function() {
-        if (token !== loadToken) return;
-        lightboxImg.classList.remove('loading');
-      };
-      loader.src = fullUrl;
+      } else {
+        const loader = new Image();
+        loader.onload = function() {
+          if (token !== loadToken) return;
+          fullCache.add(fullUrl);
+          lightboxImg.src = fullUrl;
+          lightboxImg.classList.remove('loading');
+        };
+        loader.onerror = function() {
+          if (token !== loadToken) return;
+          lightboxImg.classList.remove('loading');
+        };
+        loader.src = fullUrl;
+      }
+    }
+
+    if (wasActive) {
+      lightboxImg.classList.add('crossfade');
+      setTimeout(function() {
+        if (cfToken !== crossfadeToken) return;
+        lightboxImg.src = thumb.src;
+        lightboxImg.classList.remove('crossfade');
+        applyFull();
+      }, 260);
+    } else {
+      lightboxImg.src = thumb.src;
+      lightbox.classList.add('active');
+      applyFull();
     }
 
     preload((index + 1) % images.length);

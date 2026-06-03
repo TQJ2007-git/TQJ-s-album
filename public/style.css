@@ -113,6 +113,13 @@ body {
   .gallery img {
     transition: none;
   }
+  .lightbox,
+  .lightbox img {
+    transition: none;
+  }
+  .lightbox img.loading {
+    filter: none;
+  }
 }
 
 /* ===== Gallery ===== */
@@ -160,20 +167,27 @@ body {
   letter-spacing: 2px;
 }
 
-/* ===== Lightbox (unchanged) ===== */
+/* ===== Lightbox ===== */
 
 .lightbox {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.92);
   z-index: 1000;
   align-items: center;
   justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: visibility 0s 0.3s, opacity 0.3s ease;
 }
 
 .lightbox.active {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition: visibility 0s 0s, opacity 0.3s ease;
 }
 
 .lightbox img {
@@ -182,11 +196,15 @@ body {
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-  transition: filter 0.2s ease;
+  transition: opacity 0.25s ease, filter 0.2s ease;
 }
 
 .lightbox img.loading {
   filter: blur(8px);
+}
+
+.lightbox img.crossfade {
+  opacity: 0;
 }
 
 .lightbox .nav-prev,
