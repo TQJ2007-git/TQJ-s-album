@@ -196,7 +196,7 @@ body {
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-  transition: opacity 0.25s ease, filter 0.2s ease;
+  transition: opacity 0.4s ease, filter 0.2s ease;
 }
 
 .lightbox img.loading {

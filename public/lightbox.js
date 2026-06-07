@@ -6,6 +6,7 @@
   let currentIndex = -1;
   let loadToken = 0;
   let crossfadeToken = 0;
+  let isTransitioning = false;
   const fullCache = new Set();
 
   const prevBtn = document.createElement('button');
@@ -39,6 +40,7 @@
   }
 
   function open(index) {
+    if (isTransitioning) return;
     const wasActive = lightbox.classList.contains('active');
     currentIndex = index;
     const thumb = images[index];
@@ -72,13 +74,17 @@
     }
 
     if (wasActive) {
+      isTransitioning = true;
       lightboxImg.classList.add('crossfade');
       setTimeout(function() {
-        if (cfToken !== crossfadeToken) return;
+        if (cfToken !== crossfadeToken) { isTransitioning = false; return; }
         lightboxImg.src = thumb.src;
         lightboxImg.classList.remove('crossfade');
         applyFull();
-      }, 260);
+        setTimeout(function() {
+          if (cfToken === crossfadeToken) isTransitioning = false;
+        }, 250);
+      }, 200);
     } else {
       lightboxImg.src = thumb.src;
       lightbox.classList.add('active');
@@ -90,6 +96,7 @@
   }
 
   function close() {
+    isTransitioning = false;
     lightbox.classList.remove('active');
     lightboxImg.classList.remove('loading');
     document.body.style.overflow = '';
