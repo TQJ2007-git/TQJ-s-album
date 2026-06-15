@@ -83,15 +83,15 @@ async function build() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Album · 摄影作品</title>
+  <title>TQJ</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-label" lang="en">PORTFOLIO · 2026</div>
-      <h1 class="hero-title" lang="en">Album</h1>
-      <div class="hero-subtitle">摄影作品</div>
+      <h1 class="hero-title" lang="en">TQJ</h1>
+      <div class="hero-subtitle">摄影集</div>
       <div class="hero-divider"></div>
       <p class="hero-quote" lang="en">You will never walk alone</p>
       <div class="hero-author">— tqj</div>
